@@ -24,14 +24,14 @@ local function get_require_path()
 end
 
 package.path = package.path
-  .. ";"
-  .. plugin_dir
-  .. separator
-  .. get_require_path()
-  .. separator
-  .. "plugin"
-  .. separator
-  .. "?.lua"
+    .. ";"
+    .. plugin_dir
+    .. separator
+    .. get_require_path()
+    .. separator
+    .. "plugin"
+    .. separator
+    .. "?.lua"
 
 local utilities = require "bar.utilities"
 local config = require "bar.config"
@@ -90,8 +90,8 @@ wez.on("format-tab-title", function(tab, _, _, conf, _, _)
   local index = tab.tab_index + 1
   local offset = #tostring(index) + #options.separator.left_icon + (2 * options.separator.space) + 2
   local title = index
-    .. utilities._space(options.separator.left_icon, options.separator.space, nil)
-    .. tabs.get_title(tab)
+      .. utilities._space(options.separator.left_icon, options.separator.space, nil)
+      .. tabs.get_title(tab)
 
   local width = conf.tab_max_width - offset
   if #title > conf.tab_max_width then
@@ -189,7 +189,12 @@ wez.on("update-status", function(window, pane)
     {
       name = "hostname",
       func = function()
-        return wez.hostname()
+        -- Try to get hostname from shell command instead of wezterm
+        local success, stdout, _ = wez.run_child_process { "uname -n" }
+        if success then
+          return utilities._trim(stdout)
+        end
+        return "unknown"
       end,
     },
     {
@@ -219,7 +224,7 @@ wez.on("update-status", function(window, pane)
       table.insert(right_cells, { Foreground = { Color = palette.brights[1] } })
       table.insert(right_cells, {
         Text = utilities._space(options.separator.right_icon, options.separator.space, nil)
-          .. options.modules[name].icon,
+            .. options.modules[name].icon,
       })
       table.insert(right_cells, { Text = utilities._space(options.separator.field_icon, options.separator.space, nil) })
     end
